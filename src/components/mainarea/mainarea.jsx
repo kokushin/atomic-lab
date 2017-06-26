@@ -57,15 +57,6 @@ const option = {
   }
 }
 
-const material = {
-  variable: 0,
-  mixin: 1,
-  atom: 2,
-  molecule: 3,
-  organism: 4,
-  template: 5
-};
-
 export default class MainArea extends React.Component {
 
   constructor() {
@@ -195,6 +186,7 @@ export default class MainArea extends React.Component {
     }
     preview = compiler.markup[config.markup](preview);
 
+    let once = false;
 
     while (1) {
       const comment = parser.getTag(preview, components);
@@ -209,9 +201,13 @@ export default class MainArea extends React.Component {
         if (name == comp.name) {
           flag = true;
 
-          if (itemId !== comp.itemId && !this.isGreaterThan(comp.category)) {
-            preview = preview.replace(comment, "");
-            break;
+          // loop回避
+          if (itemId === comp.itemId) {
+            if(once === true) {
+              preview = preview.replace(comment, "");
+              break;
+            }
+            once = true;
           }
 
           const template = parser.getTemplate(comp.html);
@@ -231,7 +227,7 @@ export default class MainArea extends React.Component {
 		let css = '';
     for (let i = 0, n = components.length; i < n; i++) {
       const comp = components[i];
-      if (this.isGreaterThan(comp.category) || itemId === comp.itemId) {
+      if(comp.css) {
         css += comp.css;
       }
     }
